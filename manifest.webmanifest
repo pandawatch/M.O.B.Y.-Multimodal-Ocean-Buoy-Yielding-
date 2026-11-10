@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "M.O.B.Y. Thermal Observer",
+  "short_name": "M.O.B.Y.",
+  "description": "Local thermal palette observation and heat-region tracking.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f0f1eb",
+  "theme_color": "#19231f",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

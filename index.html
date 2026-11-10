@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#19231f">
+    <meta name="description" content="Local thermal palette observation and heat-region tracking.">
+    <title>M.O.B.Y. | Thermal Observer</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./src/app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="wordmark" href="./" aria-label="M.O.B.Y. Thermal Observer home">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span class="brand-copy"><strong>M.O.B.Y.</strong><span>THERMAL OBSERVER</span></span>
+      </a>
+      <div class="topbar-meta">
+        <span class="privacy-indicator"><span class="privacy-dot"></span>LOCAL ANALYSIS</span>
+        <button class="install-button" id="install-button" type="button" hidden>Install app</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="monitor-column" aria-label="Thermal monitor">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">FIELD VIEW / 01</p>
+            <h1>Thermal field</h1>
+          </div>
+          <div class="session-state" id="session-state" data-state="loading">
+            <span class="state-light"></span>
+            <span id="session-state-text">INITIALIZING</span>
+          </div>
+        </div>
+
+        <div class="monitor-frame">
+          <div class="monitor-toolbar">
+            <div class="feed-identity">
+              <span class="feed-symbol" aria-hidden="true"></span>
+              <span id="feed-name">DEMO FEED</span>
+            </div>
+            <div class="monitor-readout"><span>ANALYSIS</span><strong id="rate-readout">24 FPS</strong></div>
+          </div>
+          <div class="monitor-viewport" id="monitor-viewport">
+            <video id="thermal-video" autoplay muted playsinline aria-label="Thermal camera feed"></video>
+            <canvas class="thermal-display" id="thermal-display" aria-hidden="true"></canvas>
+            <canvas id="thermal-overlay" aria-hidden="true"></canvas>
+            <div class="no-signal" id="no-signal" hidden>
+              <span class="no-signal-mark" aria-hidden="true"></span>
+              <strong>NO FEED</strong>
+              <span>SELECT A SOURCE TO BEGIN</span>
+            </div>
+            <div class="viewport-corner corner-tl"></div>
+            <div class="viewport-corner corner-tr"></div>
+            <div class="viewport-corner corner-bl"></div>
+            <div class="viewport-corner corner-br"></div>
+            <div class="overlay-count" aria-live="polite"><span id="detection-count">0</span><span>REGIONS</span></div>
+          </div>
+          <div class="monitor-footer">
+            <span><i class="footer-dot"></i><span id="source-state">SIMULATED SOURCE</span></span>
+            <span id="elapsed-time">00:00</span>
+          </div>
+        </div>
+
+        <div class="source-controls" aria-label="Feed controls">
+          <div class="source-buttons" role="group" aria-label="Choose video source">
+            <button class="source-button" id="camera-button" type="button">
+              <span class="button-glyph camera-glyph" aria-hidden="true"></span>Camera
+            </button>
+            <button class="source-button is-selected" id="demo-button" type="button" aria-pressed="true">
+              <span class="button-glyph demo-glyph" aria-hidden="true"></span>Demo feed
+            </button>
+          </div>
+          <div class="transport-controls">
+            <button class="transport-button" id="pause-button" type="button" disabled>
+              <span class="pause-glyph" aria-hidden="true"></span><span id="pause-label">Pause</span>
+            </button>
+            <button class="end-button" id="end-button" type="button" disabled>End session</button>
+          </div>
+        </div>
+
+        <p class="permission-note" id="permission-note">Camera brightness is shown as pseudo-color, not measured temperature. Video stays on this device.</p>
+      </section>
+
+      <aside class="instrument-column" aria-label="Detection readouts and controls">
+        <section class="readout-section">
+          <div class="panel-heading">
+            <p class="eyebrow">TRACKING / 02</p>
+            <span class="live-tag"><span></span>LIVE</span>
+          </div>
+          <div class="primary-reading">
+            <span class="reading-label">HEAT REGIONS</span>
+            <strong id="large-count">00</strong>
+            <span class="reading-unit">CONNECTED COMPONENTS</span>
+          </div>
+          <div class="reading-rule"><span id="reading-rule-fill"></span></div>
+          <div class="reading-foot"><span>MINIMUM REGION</span><strong id="region-size-readout">8 PX</strong></div>
+        </section>
+
+        <section class="control-section">
+          <div class="panel-heading">
+            <p class="eyebrow">DETECTION GATE / 03</p>
+            <span class="index-number">01</span>
+          </div>
+          <label class="range-label" for="region-size">
+            <span>Minimum region size</span><output id="region-size-output" for="region-size">8 px</output>
+          </label>
+          <input id="region-size" type="range" min="2" max="36" value="8" step="1">
+          <div class="range-scale"><span>2 PX</span><span>36 PX</span></div>
+          <label class="select-label" for="frame-rate">Analysis rate</label>
+          <select id="frame-rate">
+            <option value="24" selected>24 frames / sec</option>
+            <option value="30">30 frames / sec</option>
+          </select>
+        </section>
+
+        <section class="palette-section">
+          <div class="panel-heading">
+            <p class="eyebrow">PALETTE KEY / 04</p>
+            <span class="index-number">RGB</span>
+          </div>
+          <div class="palette-bar" aria-label="False-color palette from low to high heat">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="palette-labels"><span>LOW SIGNAL</span><span>HIGH SIGNAL</span></div>
+          <div class="palette-values">
+            <div><i class="swatch swatch-red"></i><span>RED / ORANGE</span><small>R ≥ 190</small></div>
+            <div><i class="swatch swatch-yellow"></i><span>YELLOW</span><small>R ≥ 210</small></div>
+            <div><i class="swatch swatch-white"></i><span>WHITE-HOT</span><small>RGB ≥ 225</small></div>
+          </div>
+        </section>
+
+        <p class="calibration-note"><span aria-hidden="true">!</span> Camera pseudo-color maps brightness, not temperature. Palette thresholds are approximate.</p>
+      </aside>
+    </main>
+
+    <footer class="app-footer">
+      <span>M.O.B.Y. / OBSERVER BUILD 01</span>
+      <span id="connection-state">OFFLINE READY</span>
+    </footer>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
